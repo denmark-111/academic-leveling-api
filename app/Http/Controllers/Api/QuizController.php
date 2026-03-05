@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateQuizRequest;
 use App\Http\Resources\QuizResource;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class QuizController extends Controller
 {
@@ -26,10 +27,37 @@ class QuizController extends Controller
     {
         $validated = $request->validated();
 
-        $quiz = Quiz::create([
-            'user_id' => $request->user()->id,
-            ...$validated
-        ]);
+        $quiz = DB::transaction(function () use ($validated, $request) {
+
+            $quiz = Quiz::create([
+                'user_id' => $request->user()->id,
+                'title' => $validated['title'],
+                'description' => $validated['description'] ?? null,
+                'is_public' => $validated['is_public'] ?? false,
+            ]);
+
+            foreach ($validated['questions'] as $index => $questionData) {
+
+                $question = $quiz->questions()->create([
+                    'question_text' => $questionData['question_text'],
+                    'type' => $questionData['type'],
+                    'correct_answer' => $questionData['correct_answer'] ?? null,
+                    'points' => $questionData['points'] ?? 1,
+                    'order' => $questionData['order'] ?? $index,
+                ]);
+
+                if (!empty($questionData['choices'])) {
+                    foreach ($questionData['choices'] as $choice) {
+                        $question->choices()->create([
+                            'choice_text' => $choice['choice_text'],
+                            'is_correct' => $choice['is_correct'],
+                        ]);
+                    }
+                }
+            }
+
+            return $quiz->load('questions.choices');
+        });
 
         return QuizResource::make($quiz)
             ->additional(['message' => 'Quiz created successfully'])

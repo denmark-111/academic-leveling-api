@@ -22,6 +22,7 @@ class QuizResource extends JsonResource
             'is_public' => $this->is_public,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'questions' => QuestionResource::collection($this->whenLoaded('questions')),
         ];
     }
 }
