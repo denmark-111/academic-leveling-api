@@ -69,8 +69,14 @@ class QuizController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Quiz $quiz)
+    public function destroy(Request $request, Quiz $quiz)
     {
-        //
+        if ($quiz->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $quiz->delete();
+
+        return response()->noContent();
     }
 }
