@@ -88,7 +88,42 @@ class QuizController extends Controller
 
         $validated = $request->validated();
 
-        $quiz->update($validated);
+        $quiz = DB::transaction(function () use ($validated, $quiz) {
+
+            $quiz->update([
+                'title' => $validated['title'] ?? $quiz->title,
+                'description' => $validated['description'] ?? $quiz->description,
+                'is_public' => $validated['is_public'] ?? $quiz->is_public,
+            ]);
+
+            if (isset($validated['questions'])) {
+
+                // delete existing questions and choices (choices will be deleted automatically via model events)
+                $quiz->questions->each->delete();
+
+                foreach ($validated['questions'] as $index => $questionData) {
+
+                    $question = $quiz->questions()->create([
+                        'question_text' => $questionData['question_text'],
+                        'type' => $questionData['type'],
+                        'correct_answer' => $questionData['correct_answer'] ?? null,
+                        'points' => $questionData['points'] ?? 1,
+                        'order' => $questionData['order'] ?? $index,
+                    ]);
+
+                    if (!empty($questionData['choices'])) {
+                        foreach ($questionData['choices'] as $choice) {
+                            $question->choices()->create([
+                                'choice_text' => $choice['choice_text'],
+                                'is_correct' => $choice['is_correct'],
+                            ]);
+                        }
+                    }
+                }
+            }
+
+            return $quiz->load('questions.choices');
+        });
 
         return QuizResource::make($quiz)
             ->additional(['message' => 'Quiz updated successfully']);   
@@ -107,4 +142,28 @@ class QuizController extends Controller
 
         return response()->noContent();
     }
+
+    // Helper method to create questions and choices
+    // private function createQuestions($quiz, array $questions)
+    // {
+    //     foreach ($questions as $index => $questionData) {
+
+    //         $question = $quiz->questions()->create([
+    //             'question_text' => $questionData['question_text'],
+    //             'type' => $questionData['type'],
+    //             'correct_answer' => $questionData['correct_answer'] ?? null,
+    //             'points' => $questionData['points'] ?? 1,
+    //             'order' => $questionData['order'] ?? $index,
+    //         ]);
+
+    //         if (!empty($questionData['choices'])) {
+    //             foreach ($questionData['choices'] as $choice) {
+    //                 $question->choices()->create([
+    //                     'choice_text' => $choice['choice_text'],
+    //                     'is_correct' => $choice['is_correct'],
+    //                 ]);
+    //             }
+    //         }
+    //     }
+    // }
 }

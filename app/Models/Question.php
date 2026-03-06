@@ -13,6 +13,14 @@ class Question extends Model
 
     use SoftDeletes;
 
+    protected static function booted()
+    {
+        // When a question is deleted, also delete its choices
+        static::deleting(function ($question) {
+            $question->choices()->delete();
+        });
+    }
+    
     protected $fillable = [
         'quiz_id',
         'question_text',

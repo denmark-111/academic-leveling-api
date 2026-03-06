@@ -17,6 +17,14 @@ class Quiz extends Model
         'is_public' => 'boolean',
     ];
 
+    protected static function booted()
+    {
+        // When a quiz is deleted, also delete its questions
+        static::deleting(function ($quiz) {
+            $quiz->questions->each->delete();
+        });
+    }
+
     protected $fillable = [
         'user_id',
         'title',

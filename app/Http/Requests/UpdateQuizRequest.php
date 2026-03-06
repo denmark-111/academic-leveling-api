@@ -25,6 +25,22 @@ class UpdateQuizRequest extends FormRequest
             'title' => 'sometimes|required|string|max:255',
             'description' => 'sometimes|nullable|string',
             'is_public' => 'sometimes|boolean',
+
+            // QUESTIONS
+            'questions' => 'sometimes|array|min:1',
+
+            'questions.*.question_text' => 'required_with:questions|string',
+            'questions.*.type' => 'required_with:questions|string|in:multiple_choice,true_false,short_answer',
+            'questions.*.points' => 'nullable|integer|min:1',
+            'questions.*.order' => 'nullable|integer',
+
+            // short answer
+            'questions.*.correct_answer' => 'nullable|string',
+
+            // choices
+            'questions.*.choices' => 'nullable|array',
+            'questions.*.choices.*.choice_text' => 'required_with:questions.*.choices|string',
+            'questions.*.choices.*.is_correct' => 'required_with:questions.*.choices|boolean',
         ];
     }
 }
