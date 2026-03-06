@@ -36,25 +36,7 @@ class QuizController extends Controller
                 'is_public' => $validated['is_public'] ?? false,
             ]);
 
-            foreach ($validated['questions'] as $index => $questionData) {
-
-                $question = $quiz->questions()->create([
-                    'question_text' => $questionData['question_text'],
-                    'type' => $questionData['type'],
-                    'correct_answer' => $questionData['correct_answer'] ?? null,
-                    'points' => $questionData['points'] ?? 1,
-                    'order' => $questionData['order'] ?? $index,
-                ]);
-
-                if (!empty($questionData['choices'])) {
-                    foreach ($questionData['choices'] as $choice) {
-                        $question->choices()->create([
-                            'choice_text' => $choice['choice_text'],
-                            'is_correct' => $choice['is_correct'],
-                        ]);
-                    }
-                }
-            }
+            $this->createQuestions($quiz, $validated['questions']);
 
             return $quiz->load('questions.choices');
         });
@@ -101,25 +83,8 @@ class QuizController extends Controller
                 // delete existing questions and choices (choices will be deleted automatically via model events)
                 $quiz->questions->each->delete();
 
-                foreach ($validated['questions'] as $index => $questionData) {
-
-                    $question = $quiz->questions()->create([
-                        'question_text' => $questionData['question_text'],
-                        'type' => $questionData['type'],
-                        'correct_answer' => $questionData['correct_answer'] ?? null,
-                        'points' => $questionData['points'] ?? 1,
-                        'order' => $questionData['order'] ?? $index,
-                    ]);
-
-                    if (!empty($questionData['choices'])) {
-                        foreach ($questionData['choices'] as $choice) {
-                            $question->choices()->create([
-                                'choice_text' => $choice['choice_text'],
-                                'is_correct' => $choice['is_correct'],
-                            ]);
-                        }
-                    }
-                }
+                // create new questions and choices
+                $this->createQuestions($quiz, $validated['questions']);
             }
 
             return $quiz->load('questions.choices');
@@ -144,26 +109,26 @@ class QuizController extends Controller
     }
 
     // Helper method to create questions and choices
-    // private function createQuestions($quiz, array $questions)
-    // {
-    //     foreach ($questions as $index => $questionData) {
+    private function createQuestions($quiz, array $questions)
+    {
+        foreach ($questions as $index => $questionData) {
 
-    //         $question = $quiz->questions()->create([
-    //             'question_text' => $questionData['question_text'],
-    //             'type' => $questionData['type'],
-    //             'correct_answer' => $questionData['correct_answer'] ?? null,
-    //             'points' => $questionData['points'] ?? 1,
-    //             'order' => $questionData['order'] ?? $index,
-    //         ]);
+            $question = $quiz->questions()->create([
+                'question_text' => $questionData['question_text'],
+                'type' => $questionData['type'],
+                'correct_answer' => $questionData['correct_answer'] ?? null,
+                'points' => $questionData['points'] ?? 1,
+                'order' => $questionData['order'] ?? $index,
+            ]);
 
-    //         if (!empty($questionData['choices'])) {
-    //             foreach ($questionData['choices'] as $choice) {
-    //                 $question->choices()->create([
-    //                     'choice_text' => $choice['choice_text'],
-    //                     'is_correct' => $choice['is_correct'],
-    //                 ]);
-    //             }
-    //         }
-    //     }
-    // }
+            if (!empty($questionData['choices'])) {
+                foreach ($questionData['choices'] as $choice) {
+                    $question->choices()->create([
+                        'choice_text' => $choice['choice_text'],
+                        'is_correct' => $choice['is_correct'],
+                    ]);
+                }
+            }
+        }
+    }
 }
