@@ -17,7 +17,7 @@ class QuizController extends Controller
      */
     public function index()
     {
-        return QuizResource::collection(Quiz::where('is_public', true)->get());
+        return QuizResource::collection(Quiz::with('user')->where('is_public', true)->get());
     }
 
     /**
@@ -38,7 +38,7 @@ class QuizController extends Controller
 
             $this->createQuestions($quiz, $validated['questions']);
 
-            return $quiz->load('questions.choices');
+            return $quiz->load('questions.choices', 'user');
         });
 
         return QuizResource::make($quiz)
@@ -56,7 +56,7 @@ class QuizController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        return QuizResource::make($quiz);
+        return QuizResource::make($quiz->load('questions.choices', 'user'));
     }
 
     /**
@@ -87,7 +87,7 @@ class QuizController extends Controller
                 $this->createQuestions($quiz, $validated['questions']);
             }
 
-            return $quiz->load('questions.choices');
+            return $quiz->load('questions.choices', 'user');
         });
 
         return QuizResource::make($quiz)

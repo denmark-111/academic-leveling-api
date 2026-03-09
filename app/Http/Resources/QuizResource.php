@@ -16,7 +16,12 @@ class QuizResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'user' => ['id' => $this->user->id, 'name' => $this->user->name,],
+            'user' => $this->whenLoaded('user', function () {
+                return[
+                    'id' => $this->user->id,
+                    'name' => $this->user->name,
+                ];
+            }),
             'title' => $this->title,
             'description' => $this->description,
             'is_public' => $this->is_public,
