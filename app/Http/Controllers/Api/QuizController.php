@@ -15,9 +15,16 @@ class QuizController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return QuizResource::collection(Quiz::with('user')->where('is_public', true)->get());
+        return QuizResource::collection(
+            Quiz::with('user')
+                ->where(function ($query) use ($request) {
+                    $query->where('is_public', true)
+                        ->orWhere('user_id', $request->user()->id);
+                })
+                ->paginate(10)
+        );
     }
 
     /**
