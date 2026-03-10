@@ -13,5 +13,6 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/quizzes/mine', [QuizController::class, 'myQuizzes']);
     Route::apiResource('quizzes', QuizController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
 });

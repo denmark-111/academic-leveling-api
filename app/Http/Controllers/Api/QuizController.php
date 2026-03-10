@@ -115,6 +115,16 @@ class QuizController extends Controller
         return response()->noContent();
     }
 
+    // Quizzes owned by the user
+    public function myQuizzes(Request $request)
+    {
+        return QuizResource::collection(
+            Quiz::with('user')
+                ->where('user_id', $request->user()->id)
+                ->paginate(10)
+        );
+    }
+
     // Helper method to create questions and choices
     private function createQuestions($quiz, array $questions)
     {
