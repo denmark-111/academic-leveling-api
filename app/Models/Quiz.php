@@ -14,6 +14,8 @@ class Quiz extends Model
     use SoftDeletes;
 
     protected $casts = [
+        'is_question_shuffled' => 'boolean',
+        'is_choices_shuffled' => 'boolean',
         'is_public' => 'boolean',
     ];
 
@@ -26,10 +28,16 @@ class Quiz extends Model
     }
 
     protected $fillable = [
-        'user_id',
         'title',
         'description',
+        'subject',
+        'grade_level',
+        'difficulty',
+        'timer_mode',
+        'is_question_shuffled',
+        'is_choices_shuffled',
         'is_public',
+        'quiz_code',
     ];
 
     public function user()

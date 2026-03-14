@@ -24,6 +24,12 @@ class StoreQuizRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'subject' => 'nullable|string',
+            'grade_level' => 'nullable|string|in:all,g7,g8,g9,g10,g11,g12,college',
+            'difficulty' => 'nullable|string|in:easy,medium,hard',
+            'timer_mode' => 'nullable|string|in:none,question,quiz',
+            'is_question_shuffled' => 'boolean',
+            'is_choices_shuffled' => 'boolean',
             'is_public' => 'boolean',
 
             // QUESTIONS ARRAY

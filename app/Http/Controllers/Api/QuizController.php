@@ -9,6 +9,7 @@ use App\Http\Resources\QuizResource;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class QuizController extends Controller
 {
@@ -33,20 +34,32 @@ class QuizController extends Controller
     public function store(StoreQuizRequest $request)
     {
         $validated = $request->validated();
+        $user = $request->user();
 
-        $quiz = DB::transaction(function () use ($validated, $request) {
+        $quiz = DB::transaction(function () use ($validated, $user) {
+            
+            // Generate code only if public
+            $quizCode = ($validated['is_public'] ?? false) ? $this->generateUniqueQuizCode() : null;
 
-            $quiz = Quiz::create([
-                'user_id' => $request->user()->id,
+            $quiz = $user->quizzes()->create([
                 'title' => $validated['title'],
                 'description' => $validated['description'] ?? null,
+                'subject' => $validated['subject'] ?? null,
+                'grade_level' => $validated['grade_level'] ?? 'all',
+                'difficulty' => $validated['difficulty'] ?? 'easy',
+                'timer_mode' => $validated['timer_mode'] ?? 'none',
+                'is_question_shuffled' => $validated['is_question_shuffled'] ?? false,
+                'is_choices_shuffled' => $validated['is_choices_shuffled'] ?? false,
                 'is_public' => $validated['is_public'] ?? false,
+                'quiz_code' => $quizCode,
             ]);
 
             $this->createQuestions($quiz, $validated['questions']);
 
-            return $quiz->load('questions.choices', 'user');
+            return $quiz;
         });
+
+        $quiz->load(['questions.choices', 'user']);
 
         return QuizResource::make($quiz)
             ->additional(['message' => 'Quiz created successfully'])
@@ -147,5 +160,15 @@ class QuizController extends Controller
                 }
             }
         }
+    }
+
+    // Generate a unique 8-character quiz code.
+    private function generateUniqueQuizCode(): string
+    {
+        do {
+            $code = Str::upper(Str::random(8));
+        } while (Quiz::where('quiz_code', $code)->exists());
+
+        return $code;
     }
 }
