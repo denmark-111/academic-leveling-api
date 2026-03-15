@@ -26,6 +26,7 @@ class StoreQuizRequest extends FormRequest
             'description' => 'nullable|string',
             'subject' => 'nullable|string',
             'grade_level' => 'nullable|string|in:all,g7,g8,g9,g10,g11,g12,college',
+            'type' => 'required|string|in:multiple_choice,true_false,identification,mixed',
             'difficulty' => 'nullable|string|in:easy,medium,hard',
             'timer_mode' => 'nullable|string|in:none,question,quiz',
             'is_question_shuffled' => 'boolean',

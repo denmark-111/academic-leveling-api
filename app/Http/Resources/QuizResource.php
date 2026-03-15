@@ -27,6 +27,7 @@ class QuizResource extends JsonResource
             'description' => $this->description,
             'subject' => $this->subject,
             'grade_level' => $this->grade_level,
+            'type' => $this->type,
             'difficulty' => $this->difficulty,
             'timer_mode' => $this->timer_mode,
             'is_question_shuffled' => $this->is_question_shuffled,

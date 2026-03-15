@@ -26,6 +26,7 @@ class UpdateQuizRequest extends FormRequest
             'description' => 'sometimes|nullable|string',
             'subject' => 'sometimes|nullable|string',
             'grade_level' => 'sometimes|nullable|string|in:all,g7,g8,g9,g10,g11,g12,college',
+            'type' => 'sometimes|required|string|in:multiple_choice,true_false,identification,mixed',
             'difficulty' => 'sometimes|nullable|string|in:easy,medium,hard',
             'timer_mode' => 'sometimes|nullable|string|in:none,question,quiz',
             'is_question_shuffled' => 'sometimes|boolean',

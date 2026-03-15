@@ -32,6 +32,7 @@ class Quiz extends Model
         'description',
         'subject',
         'grade_level',
+        'type',
         'difficulty',
         'timer_mode',
         'is_question_shuffled',

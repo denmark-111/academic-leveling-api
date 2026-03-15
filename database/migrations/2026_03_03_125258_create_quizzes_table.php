@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('subject')->nullable();
             $table->enum('grade_level', ['all','g7','g8','g9','g10','g11','g12','college'])->default('all');
+            $table->enum('type', ['multiple_choice', 'true_false', 'identification', 'mixed'])->default('multiple_choice');
             $table->enum('difficulty', ['easy', 'medium', 'hard'])->default('easy');
             $table->enum('timer_mode', ['none', 'question', 'quiz'])->default('none');
             $table->boolean('is_question_shuffled')->default(false);
