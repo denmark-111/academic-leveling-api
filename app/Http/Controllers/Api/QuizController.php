@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateQuizRequest;
 use App\Http\Resources\QuizResource;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -92,11 +93,27 @@ class QuizController extends Controller
 
         $quiz = DB::transaction(function () use ($validated, $quiz) {
 
-            $quiz->update([
-                'title' => $validated['title'] ?? $quiz->title,
-                'description' => $validated['description'] ?? $quiz->description,
-                'is_public' => $validated['is_public'] ?? $quiz->is_public,
-            ]);
+            // regenerate quiz code if quiz becomes public, remove if it becomes private
+            if (isset($validated['is_public'])) {
+                if ($validated['is_public'] && !$quiz->quiz_code) {
+                    $validated['quiz_code'] = $this->generateUniqueQuizCode();
+                } elseif (!$validated['is_public']) {
+                    $validated['quiz_code'] = null;
+                }
+            }
+
+            $quiz->update(Arr::only($validated, [
+                'title', 
+                'description', 
+                'subject', 
+                'grade_level',
+                'difficulty', 
+                'timer_mode', 
+                'is_question_shuffled',
+                'is_choices_shuffled', 
+                'is_public', 
+                'quiz_code'
+            ]));
 
             if (isset($validated['questions'])) {
 

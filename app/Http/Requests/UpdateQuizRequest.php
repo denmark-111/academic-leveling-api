@@ -24,6 +24,12 @@ class UpdateQuizRequest extends FormRequest
         return [
             'title' => 'sometimes|required|string|max:255',
             'description' => 'sometimes|nullable|string',
+            'subject' => 'sometimes|nullable|string',
+            'grade_level' => 'sometimes|nullable|string|in:all,g7,g8,g9,g10,g11,g12,college',
+            'difficulty' => 'sometimes|nullable|string|in:easy,medium,hard',
+            'timer_mode' => 'sometimes|nullable|string|in:none,question,quiz',
+            'is_question_shuffled' => 'sometimes|boolean',
+            'is_choices_shuffled' => 'sometimes|boolean',
             'is_public' => 'sometimes|boolean',
 
             // QUESTIONS
