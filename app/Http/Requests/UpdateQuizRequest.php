@@ -30,11 +30,11 @@ class UpdateQuizRequest extends FormRequest
             'questions' => 'sometimes|array|min:1',
 
             'questions.*.question_text' => 'required_with:questions|string',
-            'questions.*.type' => 'required_with:questions|string|in:multiple_choice,true_false,short_answer',
+            'questions.*.type' => 'required_with:questions|string|in:multiple_choice,true_false,identification',
             'questions.*.points' => 'nullable|integer|min:1',
             'questions.*.order' => 'nullable|integer',
 
-            // short answer
+            // identification
             'questions.*.correct_answer' => 'nullable|string',
 
             // choices

@@ -36,11 +36,11 @@ class StoreQuizRequest extends FormRequest
             'questions' => 'required|array|min:1',
 
             'questions.*.question_text' => 'required|string',
-            'questions.*.type' => 'required|string|in:multiple_choice,true_false,short_answer',
+            'questions.*.type' => 'required|string|in:multiple_choice,true_false,identification',
             'questions.*.points' => 'nullable|integer|min:1',
             'questions.*.order' => 'nullable|integer',
 
-            // For short answer
+            // For identification
             'questions.*.correct_answer' => 'nullable|string',
 
             // For multiple choice / true_false
