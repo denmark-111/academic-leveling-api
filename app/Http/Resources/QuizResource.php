@@ -33,6 +33,7 @@ class QuizResource extends JsonResource
             'is_question_shuffled' => $this->is_question_shuffled,
             'is_choices_shuffled' => $this->is_choices_shuffled,
             'is_public' => $this->is_public,
+            'questions_count' => $this->whenCounted('questions'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'questions' => QuestionResource::collection($this->whenLoaded('questions')),

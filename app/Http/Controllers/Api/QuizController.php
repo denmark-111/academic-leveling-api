@@ -21,6 +21,7 @@ class QuizController extends Controller
     {
         return QuizResource::collection(
             Quiz::with('user')
+                ->withCount('questions')
                 ->where(function ($query) use ($request) {
                     $query->where('is_public', true)
                         ->orWhere('user_id', $request->user()->id);
@@ -61,7 +62,7 @@ class QuizController extends Controller
             return $quiz;
         });
 
-        $quiz->load(['questions.choices', 'user']);
+        $quiz->load(['questions.choices', 'user'])->loadCount('questions');
 
         return QuizResource::make($quiz)
             ->additional(['message' => 'Quiz created successfully'])
@@ -78,7 +79,7 @@ class QuizController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        return QuizResource::make($quiz->load('questions.choices', 'user'));
+        return QuizResource::make($quiz->load('questions.choices', 'user')->loadCount('questions'));
     }
 
     /**
@@ -126,7 +127,7 @@ class QuizController extends Controller
                 $this->createQuestions($quiz, $validated['questions']);
             }
 
-            return $quiz->load('questions.choices', 'user');
+            return $quiz->load('questions.choices', 'user')->loadCount('questions');
         });
 
         return QuizResource::make($quiz)
@@ -152,6 +153,7 @@ class QuizController extends Controller
     {
         return QuizResource::collection(
             Quiz::with('user')
+                ->withCount('questions')
                 ->where('user_id', $request->user()->id)
                 ->paginate(10)
         );
