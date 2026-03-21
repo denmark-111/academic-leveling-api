@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AttemptController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\QuizController;
 use Illuminate\Http\Request;
@@ -16,4 +17,8 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/quizzes/mine', [QuizController::class, 'myQuizzes']);
     Route::apiResource('quizzes', QuizController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
+
+    Route::post('/quizzes/{quiz}/attempts', [AttemptController::class, 'start']); // Start the quiz
+    Route::post('/attempts/{attempt}/answers', [AttemptController::class, 'saveAnswer']); // Answer a question
+    Route::post('/attempts/{attempt}/submit', [AttemptController::class, 'submit']); // Submit the quiz
 });
