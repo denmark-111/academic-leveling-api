@@ -21,7 +21,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/quizzes/{quiz}/attempts', [AttemptController::class, 'start']); // Start the quiz
     Route::post('/attempts/{attempt}/answers', [AttemptController::class, 'saveAnswer']); // Answer a question
-    Route::post('/attempts/{attempt}/submit', [AttemptController::class, 'submit']); // Submit the quiz
+    Route::post('/attempts/{attempt}/submit', [AttemptController::class, 'submit']); // Submit(finish) the quiz
+    Route::post('/attempts/{attempt}/submit-all', [AttemptController::class, 'submitAll']); // Submit all answers at once
 
     Route::apiResource('study-sessions', StudySessionController::class)->only(['index', 'store']);
 });

@@ -123,4 +123,75 @@ class AttemptController extends Controller
             'correct_answers' => $attempt->answers()->where('is_correct', true)->count(),
         ]);
     }
+
+    // Submit all answers at once
+    public function submitAll(Request $request, $attemptId)
+    {
+        $attempt = Attempt::with('quiz.questions.choices')->findOrFail($attemptId);
+
+        if ($attempt->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if ($attempt->completed_at) {
+            return response()->json(['message' => 'Attempt already submitted'], 400);
+        }
+
+        $validated = $request->validate([
+            'answers' => 'required|array',
+            'answers.*.question_id' => 'required|exists:questions,id',
+            'answers.*.choice_id' => 'nullable|exists:choices,id',
+            'answers.*.answer_text' => 'nullable|string'
+        ]);
+
+        $score = 0;
+        $correctCount = 0;
+
+        foreach ($validated['answers'] as $input) {
+
+            $question = $attempt->quiz->questions
+                ->where('id', $input['question_id'])
+                ->first();
+
+            if (!$question) {
+                continue; // safety: skip invalid question
+            }
+
+            $isCorrect = null;
+
+            if (in_array($question->type, ['multiple_choice', 'true_false'])) {
+                $correctChoice = $question->choices->where('is_correct', true)->first();
+                $isCorrect = $correctChoice && $correctChoice->id == ($input['choice_id'] ?? null);
+            } elseif ($question->type === 'identification') {
+                $isCorrect = isset($input['answer_text']) &&
+                    strtolower(trim($input['answer_text'])) === strtolower(trim($question->correct_answer));
+            }
+
+            // Save (no updateOrCreate needed since it's one-shot)
+            $attempt->answers()->create([
+                'question_id' => $question->id,
+                'choice_id' => $input['choice_id'] ?? null,
+                'answer_text' => $input['answer_text'] ?? null,
+                'is_correct' => $isCorrect,
+            ]);
+
+            if ($isCorrect) {
+                $score += $question->points;
+                $correctCount++;
+            }
+        }
+
+        // Finalize attempt
+        $attempt->update([
+            'score' => $score,
+            'completed_at' => now(),
+        ]);
+
+        return response()->json([
+            'message' => 'Quiz submitted successfully',
+            'score' => $score,
+            'total_questions' => $attempt->quiz->questions->count(),
+            'correct_answers' => $correctCount,
+        ]);
+    }
 }
