@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Attempt;
 use App\Models\Question;
 use App\Models\Quiz;
+use App\Services\QuestService;
 use Illuminate\Http\Request;
 
 class AttemptController extends Controller
@@ -116,6 +117,13 @@ class AttemptController extends Controller
             'completed_at' => now(),
         ]);
 
+        // Update quest progress
+        app(QuestService::class)->updateProgress(
+            $attempt->user_id,
+            'quiz_count',
+            1
+        );
+
         return response()->json([
             'message' => 'Quiz submitted successfully',
             'score' => $score,
@@ -186,6 +194,13 @@ class AttemptController extends Controller
             'score' => $score,
             'completed_at' => now(),
         ]);
+
+        // Update quest progress
+        app(QuestService::class)->updateProgress(
+            $attempt->user_id,
+            'quiz_count',
+            1
+        );
 
         return response()->json([
             'message' => 'Quiz submitted successfully',

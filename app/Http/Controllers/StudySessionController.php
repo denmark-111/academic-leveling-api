@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\StudySessionResource;
+use App\Services\QuestService;
 use Illuminate\Http\Request;
 
 class StudySessionController extends Controller
@@ -26,6 +27,13 @@ class StudySessionController extends Controller
         $user = $request->user();
 
         $session = $user->studySessions()->create($validated);
+
+        // Update quest progress
+        app(QuestService::class)->updateProgress(
+            $user->id,
+            'study_duration',
+            $session->duration
+        );
 
         return StudySessionResource::make($session)
             ->additional(['message' => 'Study session created successfully'])
