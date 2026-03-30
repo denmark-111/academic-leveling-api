@@ -27,8 +27,8 @@ class QuestService
 
             $userQuest->progress += $value;
 
-            if (!$userQuest->is_completed && $userQuest->progress >= $quest->target) {
-                $userQuest->is_completed = true;
+            if (!$userQuest->completed_at && $userQuest->progress >= $quest->target) {
+                $userQuest->completed_at = now();
             }
 
             $userQuest->save();

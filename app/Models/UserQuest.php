@@ -10,7 +10,7 @@ class UserQuest extends Model
         'user_id',
         'quest_id',
         'progress',
-        'is_completed',
+        'completed_at',
         'period_start',
     ];
 }

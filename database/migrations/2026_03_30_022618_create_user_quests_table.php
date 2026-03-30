@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('quest_id')->constrained()->onDelete('cascade');
             $table->integer('progress')->default(0);
-            $table->boolean('is_completed')->default(false);
+            $table->timestamp('completed_at')->nullable();
             $table->date('period_start'); // important: identifies the day/week
             $table->timestamps();
         });
