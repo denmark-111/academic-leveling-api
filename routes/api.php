@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\AttemptController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\QuestController;
 use App\Http\Controllers\Api\QuizController;
-use App\Http\Controllers\StudySessionController;
+use App\Http\Controllers\Api\StudySessionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 

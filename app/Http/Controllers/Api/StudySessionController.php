@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Http\Resources\StudySessionResource;
 use App\Services\QuestService;
 use Illuminate\Http\Request;
@@ -21,7 +22,7 @@ class StudySessionController extends Controller
     {
         $validated = $request->validate([
             'session_at' => 'required|date',
-            'duration' => 'required|integer|min:1',
+            'duration' => 'required|integer|min:300', // Minimum 5 minutes (300 seconds)
         ]);
 
         $user = $request->user();

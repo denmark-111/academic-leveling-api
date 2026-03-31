@@ -23,7 +23,7 @@ class StudySessionResource extends JsonResource
                 ];
             }),
             'session_at' => $this->session_at,
-            'duration' => $this->duration,
+            'duration' => $this->duration, // Duration in seconds
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
