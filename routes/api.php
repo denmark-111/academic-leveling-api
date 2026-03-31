@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AttemptController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\QuestController;
 use App\Http\Controllers\Api\QuizController;
 use App\Http\Controllers\StudySessionController;
 use Illuminate\Http\Request;
@@ -25,4 +26,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/attempts/{attempt}/submit-all', [AttemptController::class, 'submitAll']); // Submit all answers at once
 
     Route::apiResource('study-sessions', StudySessionController::class)->only(['index', 'store']);
+
+    Route::get('/quests', [QuestController::class, 'index']);
 });
