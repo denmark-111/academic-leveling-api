@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Events\QuizCompleted;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AttemptResource;
 use App\Models\Attempt;
 use App\Models\Question;
 use App\Models\Quiz;
@@ -12,6 +13,25 @@ use Illuminate\Http\Request;
 
 class AttemptController extends Controller
 {
+    // List all attempts of the authenticated user (history)
+    public function index(Request $request)
+    {
+        $attempts = $request->user()->attempts()
+            ->with('quiz')
+            ->paginate(10);
+
+        return AttemptResource::collection($attempts);
+    }
+
+    // Show details of a specific attempt
+    public function show(Request $request, Attempt $attempt)
+    {
+        if ($attempt->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        return AttemptResource::make($attempt->load('quiz', 'answers.question'));
+    }
 
     // Start the quiz
     public function start(Request $request, $quizId)
