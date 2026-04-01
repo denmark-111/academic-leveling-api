@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\QuizCompleted;
 use App\Http\Controllers\Controller;
 use App\Models\Attempt;
 use App\Models\Question;
@@ -117,12 +118,11 @@ class AttemptController extends Controller
             'completed_at' => now(),
         ]);
 
-        // Update quest progress
-        app(QuestService::class)->updateProgress(
+        // Fire quiz completed event
+        event(new QuizCompleted(
             $attempt->user_id,
-            'quiz_count',
-            1
-        );
+            $score
+        ));
 
         return response()->json([
             'message' => 'Quiz submitted successfully',
@@ -195,12 +195,11 @@ class AttemptController extends Controller
             'completed_at' => now(),
         ]);
 
-        // Update quest progress
-        app(QuestService::class)->updateProgress(
+        // fire quiz completed event
+        event(new QuizCompleted(
             $attempt->user_id,
-            'quiz_count',
-            1
-        );
+            $score
+        ));
 
         return response()->json([
             'message' => 'Quiz submitted successfully',

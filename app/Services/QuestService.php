@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\QuestCompleted;
 use App\Models\Quest;
 use App\Models\UserQuest;
 
@@ -29,6 +30,9 @@ class QuestService
 
             if (!$userQuest->completed_at && $userQuest->progress >= $quest->target) {
                 $userQuest->completed_at = now();
+
+                // fire event for quest completion
+                event(new QuestCompleted($userId, $quest));
             }
 
             $userQuest->save();

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\StudySessionCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\StudySessionResource;
 use App\Services\QuestService;
@@ -29,12 +30,11 @@ class StudySessionController extends Controller
 
         $session = $user->studySessions()->create($validated);
 
-        // Update quest progress
-        app(QuestService::class)->updateProgress(
+        // fire study session created event
+        event(new StudySessionCreated(
             $user->id,
-            'study_duration',
             $session->duration
-        );
+        ));
 
         return StudySessionResource::make($session)
             ->additional(['message' => 'Study session created successfully'])

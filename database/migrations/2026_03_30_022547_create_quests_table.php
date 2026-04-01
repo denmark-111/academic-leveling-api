@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('target'); // e.g. 3 quizzes OR 3600 seconds
             $table->enum('period', ['daily', 'weekly']);
             $table->boolean('is_active')->default(true);
+            $table->integer('exp_reward')->default(0); // EXP reward for completing the quest
             $table->timestamps();
         });
     }
