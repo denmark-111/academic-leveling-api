@@ -59,15 +59,21 @@ class AttemptController extends Controller
             return response()->json(['message' => 'Question does not belong to this quiz'], 403);
         }
 
-        // Determine correctness
-        $isCorrect = null;
+        $isCorrect = null; // Determine correctness
+        $answerText = null; // For answer snapshot
 
         if ($question->type === 'multiple_choice' || $question->type === 'true_false') {
+            $selectedChoice = $question->choices()->where('id', $validated['choice_id'] ?? null)->first();
+
             $correctChoice = $question->choices()->where('is_correct', true)->first();
-            $isCorrect = $correctChoice && $correctChoice->id == $validated['choice_id'];
+
+            $isCorrect = $correctChoice && $selectedChoice && $correctChoice->id === $selectedChoice->id;
+
+            $answerText = $selectedChoice?->choice_text;
         } elseif ($question->type === 'identification') {
-            $isCorrect = isset($validated['answer_text'])
-                && strtolower(trim($validated['answer_text'])) === strtolower(trim($question->correct_answer));
+            $answerText = $validated['answer_text'] ?? null;
+
+            $isCorrect = $answerText && strtolower(trim($answerText)) === strtolower(trim($question->correct_answer));
         }
 
         // Save or update answer
@@ -78,7 +84,7 @@ class AttemptController extends Controller
             ],
             [
                 'choice_id' => $validated['choice_id'] ?? null,
-                'answer_text' => $validated['answer_text'] ?? null,
+                'answer_text' => $answerText,
                 'is_correct' => $isCorrect,
             ]
         );
@@ -165,21 +171,28 @@ class AttemptController extends Controller
                 continue; // safety: skip invalid question
             }
 
-            $isCorrect = null;
+            $isCorrect = null; // Determine correctness
+            $answerText = null; // For answer snapshot
 
             if (in_array($question->type, ['multiple_choice', 'true_false'])) {
+                $selectedChoice = $question->choices->where('id', $input['choice_id'] ?? null)->first();
+
                 $correctChoice = $question->choices->where('is_correct', true)->first();
-                $isCorrect = $correctChoice && $correctChoice->id == ($input['choice_id'] ?? null);
+
+                $isCorrect = $correctChoice && $selectedChoice && $correctChoice->id === $selectedChoice->id;
+
+                $answerText = $selectedChoice?->choice_text;
             } elseif ($question->type === 'identification') {
-                $isCorrect = isset($input['answer_text']) &&
-                    strtolower(trim($input['answer_text'])) === strtolower(trim($question->correct_answer));
+                $answerText = $input['answer_text'] ?? null;
+
+                $isCorrect = $answerText && strtolower(trim($answerText)) === strtolower(trim($question->correct_answer));
             }
 
             // Save (no updateOrCreate needed since it's one-shot)
             $attempt->answers()->create([
                 'question_id' => $question->id,
                 'choice_id' => $input['choice_id'] ?? null,
-                'answer_text' => $input['answer_text'] ?? null,
+                'answer_text' => $answerText,
                 'is_correct' => $isCorrect,
             ]);
 
