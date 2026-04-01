@@ -5,11 +5,12 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\QuestController;
 use App\Http\Controllers\Api\QuizController;
 use App\Http\Controllers\Api\StudySessionController;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
-    return $request->user();
+    return UserResource::make($request->user());
 })->middleware('auth:sanctum');
 
 Route::post('/login', [AuthController::class, 'login']);

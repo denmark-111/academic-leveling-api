@@ -21,8 +21,9 @@ class ExperienceService
         $user->save();
     }
 
-    private function expToNextLevel($level)
+    public function expToNextLevel(int $level): int
     {
-        return 100 + ($level * 20);
+        // Level 1 -> 1500 exp, each subsequent level requires 500 more exp than the previous
+        return 1500 + (($level - 1) * 500);
     }
 }
