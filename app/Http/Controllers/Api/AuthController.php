@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,7 +30,7 @@ class AuthController extends Controller
 
         return response()->json([
             'token' => $token,
-            'user' => $user,
+            'data' => UserResource::make($user),
         ]);
     }
 
@@ -54,14 +55,16 @@ class AuthController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'level' => 1,
+            'exp' => 0
         ]);
 
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
             'message' => 'Registration successful',
-            'user' => $user,
             'token' => $token,
+            'data' => UserResource::make($user),
         ], 201);
     }
 }
