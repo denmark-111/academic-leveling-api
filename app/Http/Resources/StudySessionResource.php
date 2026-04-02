@@ -26,6 +26,7 @@ class StudySessionResource extends JsonResource
             'duration' => $this->duration, // Duration in seconds
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'rewards' => $this->when(isset($this->rewards), $this->rewards), // Include rewards if they are set (from controller)
         ];
     }
 }

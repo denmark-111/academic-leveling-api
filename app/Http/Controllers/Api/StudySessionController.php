@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Events\StudySessionCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\StudySessionResource;
-use App\Services\QuestService;
+use App\Services\CoinService;
+use App\Services\ExperienceService;
 use Illuminate\Http\Request;
 
 class StudySessionController extends Controller
@@ -35,6 +36,12 @@ class StudySessionController extends Controller
             $user->id,
             $session->duration
         ));
+
+        // temporarily attach rewards to the session for response (not saved in DB)
+        $session->rewards = [
+            'exp' => app(ExperienceService::class)->calculateStudyExp($session->duration),
+            'coins' => app(CoinService::class)->calculateStudyCoins($session->duration),
+        ];
 
         return StudySessionResource::make($session)
             ->additional(['message' => 'Study session created successfully'])

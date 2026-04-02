@@ -33,7 +33,7 @@ class CoinService
     }
 
     // Study coin formula
-    private function calculateStudyCoins($duration): int
+    public function calculateStudyCoins($duration): int
     {
         return floor($duration / 120);
     }

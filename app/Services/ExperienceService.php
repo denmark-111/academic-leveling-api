@@ -50,7 +50,7 @@ class ExperienceService
     }
 
     // Study Exp formula
-    private function calculateStudyExp($duration): int
+    public function calculateStudyExp($duration): int
     {
         return floor($duration / 60);
     }
