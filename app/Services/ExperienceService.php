@@ -26,4 +26,38 @@ class ExperienceService
         // Level 1 -> 1500 exp, each subsequent level requires 500 more exp than the previous
         return 1500 + (($level - 1) * 500);
     }
+
+    // Quiz EXP gain logic
+    public function gainFromQuiz($userId, $score)
+    {
+        $exp = $this->calculateQuizExp($score);
+
+        $this->gainExp($userId, $exp);
+    }
+
+    // Quiz Exp formula
+    private function calculateQuizExp($score): int
+    {
+        return $score * 5;
+    }
+
+    // Study EXP gain logic
+    public function gainFromStudy($userId, $duration)
+    {
+        $exp = $this->calculateStudyExp($duration);
+
+        $this->gainExp($userId, $exp);
+    }
+
+    // Study Exp formula
+    private function calculateStudyExp($duration): int
+    {
+        return floor($duration / 60);
+    }
+
+    // Quest EXP logic
+    public function gainFromQuest($userId, $quest)
+    {
+        $this->gainExp($userId, $quest->exp_reward);
+    }
 }

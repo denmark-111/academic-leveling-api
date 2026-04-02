@@ -28,11 +28,9 @@ class HandleQuizCompleted
         );
 
         // EXP gain
-        $exp = $event->score * 5;
-
-        app(ExperienceService::class)->gainExp(
+        app(ExperienceService::class)->gainFromQuiz(
             $event->userId,
-            $exp
+            $event->score
         );
     }
 }

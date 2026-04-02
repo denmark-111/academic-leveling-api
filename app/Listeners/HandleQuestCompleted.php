@@ -19,9 +19,9 @@ class HandleQuestCompleted
 
     public function handle(QuestCompleted $event)
     {
-        app(ExperienceService::class)->gainExp(
+        app(ExperienceService::class)->gainFromQuest(
             $event->userId,
-            $event->quest->exp_reward
+            $event->quest
         );
     }
 }

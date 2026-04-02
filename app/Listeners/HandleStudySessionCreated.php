@@ -28,11 +28,9 @@ class HandleStudySessionCreated
         );
 
         // EXP gain
-        $exp = floor($event->duration / 60);
-
-        app(ExperienceService::class)->gainExp(
+        app(ExperienceService::class)->gainFromStudy(
             $event->userId,
-            $exp
+            $event->duration
         );
     }
 }
