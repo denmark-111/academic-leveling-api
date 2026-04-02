@@ -18,6 +18,7 @@ class AttemptController extends Controller
     {
         $attempts = $request->user()->attempts()
             ->with('quiz')
+            ->whereNotNull('completed_at')
             ->paginate(10);
 
         return AttemptResource::collection($attempts);
@@ -28,6 +29,10 @@ class AttemptController extends Controller
     {
         if ($attempt->user_id !== $request->user()->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if (!$attempt->completed_at) {
+            return response()->json(['message' => 'Attempt not completed yet'], 404);
         }
 
         return AttemptResource::make($attempt->load('quiz', 'answers.question'));
