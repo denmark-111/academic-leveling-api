@@ -20,7 +20,7 @@ class CoinService
     }
 
     // Quiz coin formula
-    private function calculateQuizCoins($score): int
+    public function calculateQuizCoins($score): int
     {
         return floor($score * 3);
     }

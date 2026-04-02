@@ -36,7 +36,7 @@ class ExperienceService
     }
 
     // Quiz Exp formula
-    private function calculateQuizExp($score): int
+    public function calculateQuizExp($score): int
     {
         return $score * 5;
     }

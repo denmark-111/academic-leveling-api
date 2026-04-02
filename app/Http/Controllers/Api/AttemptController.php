@@ -8,7 +8,8 @@ use App\Http\Resources\AttemptResource;
 use App\Models\Attempt;
 use App\Models\Question;
 use App\Models\Quiz;
-use App\Services\QuestService;
+use App\Services\CoinService;
+use App\Services\ExperienceService;
 use Illuminate\Http\Request;
 
 class AttemptController extends Controller
@@ -157,9 +158,15 @@ class AttemptController extends Controller
 
         return response()->json([
             'message' => 'Quiz submitted successfully',
-            'score' => $score,
-            'total_questions' => $attempt->quiz->questions()->count(),
-            'correct_answers' => $attempt->answers()->where('is_correct', true)->count(),
+            'data' => [
+                'score' => $score,
+                'total_questions' => $attempt->quiz->questions()->count(),
+                'correct_answers' => $attempt->answers()->where('is_correct', true)->count(),
+                'rewards' => [
+                    'exp' => app(ExperienceService::class)->calculateQuizExp($score),
+                    'coins' => app(CoinService::class)->calculateQuizCoins($score),
+                ],
+            ]
         ]);
     }
 
@@ -241,9 +248,15 @@ class AttemptController extends Controller
 
         return response()->json([
             'message' => 'Quiz submitted successfully',
-            'score' => $score,
-            'total_questions' => $attempt->quiz->questions->count(),
-            'correct_answers' => $correctCount,
+            'data' => [
+                'score' => $score,
+                'total_questions' => $attempt->quiz->questions->count(),
+                'correct_answers' => $correctCount,
+                'rewards' => [
+                    'exp' => app(ExperienceService::class)->calculateQuizExp($score),
+                    'coins' => app(CoinService::class)->calculateQuizCoins($score),
+                ],
+            ]
         ]);
     }
 }
