@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\StudySessionCreated;
+use App\Services\CoinService;
 use App\Services\ExperienceService;
 use App\Services\QuestService;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -29,6 +30,12 @@ class HandleStudySessionCreated
 
         // EXP gain
         app(ExperienceService::class)->gainFromStudy(
+            $event->userId,
+            $event->duration
+        );
+
+        // Coin gain
+        app(CoinService::class)->gainFromStudy(
             $event->userId,
             $event->duration
         );

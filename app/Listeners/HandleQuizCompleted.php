@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\QuizCompleted;
+use App\Services\CoinService;
 use App\Services\ExperienceService;
 use App\Services\QuestService;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -29,6 +30,12 @@ class HandleQuizCompleted
 
         // EXP gain
         app(ExperienceService::class)->gainFromQuiz(
+            $event->userId,
+            $event->score
+        );
+
+        // Coin gain
+        app(CoinService::class)->gainFromQuiz(
             $event->userId,
             $event->score
         );

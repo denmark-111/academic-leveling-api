@@ -20,6 +20,7 @@ return new class extends Migration
             $table->enum('period', ['daily', 'weekly']);
             $table->boolean('is_active')->default(true);
             $table->integer('exp_reward')->default(0); // EXP reward for completing the quest
+            $table->integer('coin_reward')->default(0); // Coin reward for completing the quest
             $table->timestamps();
         });
     }
