@@ -31,4 +31,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('study-sessions', StudySessionController::class)->only(['index', 'store']);
 
     Route::get('/quests', [QuestController::class, 'index']);
+    Route::post('/quests/{quest}/claim', [QuestController::class, 'claim']);
 });

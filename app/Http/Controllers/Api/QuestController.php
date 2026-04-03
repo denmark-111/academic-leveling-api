@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Quest;
 use App\Models\UserQuest;
+use App\Services\CoinService;
+use App\Services\ExperienceService;
 use Illuminate\Http\Request;
 
 class QuestController extends Controller
@@ -32,7 +34,6 @@ class QuestController extends Controller
                 ->first();
 
             $progress = $userQuest->progress ?? 0;
-            $completedAt = $userQuest->completed_at ?? null;
 
             $data = [
                 'id' => $quest->id,
@@ -41,16 +42,64 @@ class QuestController extends Controller
                 'type' => $quest->type,
                 'progress' => $progress,
                 'target' => $quest->target,
-                'completed' => !is_null($completedAt),
-                'completed_at' => $completedAt,
+                'completed_at' => $userQuest->completed_at ?? null,
                 'percentage' => $quest->target > 0
                     ? min(100, ($progress / $quest->target) * 100)
                     : 0,
+                'rewards' => [
+                    'exp' => $quest->exp_reward,
+                    'coins' => $quest->coin_reward,
+                    'claimed_at' => $userQuest->claimed_at ?? null,
+                ],
             ];
 
             $result[$quest->period][] = $data;
         }
 
         return response()->json(['data' => $result]);
+    }
+
+    // Claim quest rewards
+    public function claim(Request $request, $questId)
+    {
+        $user = $request->user();
+
+        $quest = Quest::findOrFail($questId);
+
+        $periodStart = $quest->period === 'daily'
+            ? now()->startOfDay()
+            : now()->startOfWeek();
+
+        $userQuest = UserQuest::where('user_id', $user->id)
+            ->where('quest_id', $quest->id)
+            ->where('period_start', $periodStart)
+            ->first();
+
+        if (!$userQuest || !$userQuest->completed_at) {
+            return response()->json(['message' => 'Quest not completed'], 400);
+        }
+
+        if ($userQuest->claimed_at) {
+            return response()->json(['message' => 'Already claimed'], 400);
+        }
+
+        // Grant rewards
+        app(ExperienceService::class)
+            ->gainFromQuest($user->id, $quest);
+
+        app(CoinService::class)
+            ->gainFromQuest($user->id, $quest);
+
+        // Mark as claimed
+        $userQuest->claimed_at = now();
+        $userQuest->save();
+
+        return response()->json([
+            'message' => 'Rewards claimed successfully',
+            'data' => [
+                'exp_gained' => $quest->exp_reward,
+                'coins_gained' => $quest->coin_reward,
+            ]
+        ]);
     }
 }
