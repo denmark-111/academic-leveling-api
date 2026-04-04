@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->enum('type', ['quiz_count', 'study_duration']); // what to track
+            $table->enum('type', ['quiz_count', 'study_duration', 'quest_completion_count']); // what to track
             $table->integer('target'); // e.g. 3 quizzes OR 3600 seconds
             $table->enum('period', ['daily', 'weekly']);
+            $table->enum('source_period', ['daily', 'weekly'])->nullable(); // for tracking progress across periods (e.g. daily quest completions counting as a progress towards a weekly meta quest)
             $table->boolean('is_active')->default(true);
             $table->integer('exp_reward')->default(0); // EXP reward for completing the quest
             $table->integer('coin_reward')->default(0); // Coin reward for completing the quest

@@ -57,6 +57,18 @@ class QuestSeeder extends Seeder
                 'exp_reward' => 500,
                 'coin_reward' => 250,
             ],
+            // weekly meta quest
+            [
+                'title' => 'Complete 10 daily quests',
+                'description' => 'Complete 10 daily quests this week',
+                'type' => 'quest_completion_count',
+                'target' => 10,
+                'period' => 'weekly',
+                'source_period' => 'daily', // cross-period tracking: counts daily quest completions towards this weekly meta quest
+                'is_active' => true,
+                'exp_reward' => 800,
+                'coin_reward' => 400,
+            ],
         ];
 
         foreach ($quests as $quest) {
