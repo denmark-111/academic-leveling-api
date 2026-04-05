@@ -15,6 +15,7 @@ return new class extends Migration
             $table->integer('exp')->default(0);
             $table->integer('level')->default(1);
             $table->integer('coins')->default(0);
+            $table->string('username')->unique();
         });
     }
 
