@@ -25,6 +25,7 @@ class AttemptResource extends JsonResource
                 return $this->answers->map(function ($answer) {
                     return [
                         'question_text' => $answer->question->question_text,
+                        'correct_answer' => $answer->correct_answer_snapshot, // correct answer snapshot at the time of attempt
                         'answer_text' => $answer->answer_text,
                         'is_correct' => $answer->is_correct,
                     ];

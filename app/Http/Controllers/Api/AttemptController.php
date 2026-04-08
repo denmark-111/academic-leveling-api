@@ -112,7 +112,7 @@ class AttemptController extends Controller
                 'question_id' => $question->id,
             ],
             [
-                'choice_id' => $validated['choice_id'] ?? null,
+                'choice_id' => $validated['choice_id'] ?? null, // currently stores choice_id even for identification, will be fixed later
                 'answer_text' => $answerText,
                 'is_correct' => $isCorrect,
                 'correct_answer_snapshot' => $correctAnswerSnapshot,
@@ -230,7 +230,7 @@ class AttemptController extends Controller
             // Save (no updateOrCreate needed since it's one-shot)
             $attempt->answers()->create([
                 'question_id' => $question->id,
-                'choice_id' => $input['choice_id'] ?? null,
+                'choice_id' => $input['choice_id'] ?? null, // currently stores choice_id even for identification, will be fixed later
                 'answer_text' => $answerText,
                 'is_correct' => $isCorrect,
                 'correct_answer_snapshot' => $correctAnswerSnapshot,
