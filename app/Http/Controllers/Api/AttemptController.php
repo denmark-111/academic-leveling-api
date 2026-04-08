@@ -87,6 +87,7 @@ class AttemptController extends Controller
 
         $isCorrect = null; // Determine correctness
         $answerText = null; // For answer snapshot
+        $correctAnswerSnapshot = null; // For correct answer snapshot
 
         if ($question->type === 'multiple_choice' || $question->type === 'true_false') {
             $selectedChoice = $question->choices()->where('id', $validated['choice_id'] ?? null)->first();
@@ -96,10 +97,12 @@ class AttemptController extends Controller
             $isCorrect = $correctChoice && $selectedChoice && $correctChoice->id === $selectedChoice->id;
 
             $answerText = $selectedChoice?->choice_text;
+            $correctAnswerSnapshot = $correctChoice?->choice_text;
         } elseif ($question->type === 'identification') {
             $answerText = $validated['answer_text'] ?? null;
 
             $isCorrect = $answerText && strtolower(trim($answerText)) === strtolower(trim($question->correct_answer));
+            $correctAnswerSnapshot = $question->correct_answer;
         }
 
         // Save or update answer
@@ -112,6 +115,7 @@ class AttemptController extends Controller
                 'choice_id' => $validated['choice_id'] ?? null,
                 'answer_text' => $answerText,
                 'is_correct' => $isCorrect,
+                'correct_answer_snapshot' => $correctAnswerSnapshot,
             ]
         );
 
@@ -205,6 +209,7 @@ class AttemptController extends Controller
 
             $isCorrect = null; // Determine correctness
             $answerText = null; // For answer snapshot
+            $correctAnswerSnapshot = null; // For correct answer snapshot
 
             if (in_array($question->type, ['multiple_choice', 'true_false'])) {
                 $selectedChoice = $question->choices->where('id', $input['choice_id'] ?? null)->first();
@@ -214,10 +219,12 @@ class AttemptController extends Controller
                 $isCorrect = $correctChoice && $selectedChoice && $correctChoice->id === $selectedChoice->id;
 
                 $answerText = $selectedChoice?->choice_text;
+                $correctAnswerSnapshot = $correctChoice?->choice_text;
             } elseif ($question->type === 'identification') {
                 $answerText = $input['answer_text'] ?? null;
 
                 $isCorrect = $answerText && strtolower(trim($answerText)) === strtolower(trim($question->correct_answer));
+                $correctAnswerSnapshot = $question->correct_answer;
             }
 
             // Save (no updateOrCreate needed since it's one-shot)
@@ -226,6 +233,7 @@ class AttemptController extends Controller
                 'choice_id' => $input['choice_id'] ?? null,
                 'answer_text' => $answerText,
                 'is_correct' => $isCorrect,
+                'correct_answer_snapshot' => $correctAnswerSnapshot,
             ]);
 
             if ($isCorrect) {

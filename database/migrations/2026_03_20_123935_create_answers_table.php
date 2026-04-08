@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('choice_id')->nullable()->constrained()->onDelete('cascade');
             $table->text('answer_text')->nullable();
             $table->boolean('is_correct')->nullable();
+            $table->text('correct_answer_snapshot')->nullable(); //correct answer snapshot at the time of attempt
             $table->timestamps();
         });
     }

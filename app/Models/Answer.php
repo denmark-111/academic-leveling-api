@@ -11,6 +11,7 @@ class Answer extends Model
         'choice_id',
         'answer_text',
         'is_correct',
+        'correct_answer_snapshot'
     ];
     
     public function question()
