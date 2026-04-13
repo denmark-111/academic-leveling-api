@@ -19,7 +19,15 @@ class QuizController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->query('search');
+        $validated = $request->validate([
+            'search' => ['nullable', 'string', 'max:255'],
+            'difficulty' => ['nullable', 'string', 'in:easy,medium,hard'],
+            'grade_level' => ['nullable', 'string', 'in:all,g7,g8,g9,g10,g11,g12,college'], 
+        ]);
+
+        $search = $validated['search'] ?? null;
+        $difficulty = $validated['difficulty'] ?? null;
+        $gradeLevel = $validated['grade_level'] ?? null;
 
         return QuizResource::collection(
             Quiz::with('user')
@@ -28,12 +36,25 @@ class QuizController extends Controller
                     $query->where('is_public', true)
                         ->orWhere('user_id', $request->user()->id);
                 })
+
+                // Search
                 ->when($search, function ($query, $search) {
                     $query->where(function ($q) use ($search) {
                         $q->where('quiz_code', $search) // exact match for quiz code
                         ->orWhere('title', 'ILIKE', "%{$search}%");
                     });
                 })
+
+                // Filter by difficulty
+                ->when($difficulty, function ($query, $difficulty) {
+                    $query->where('difficulty', $difficulty);
+                })
+
+                // Filter by grade level
+                ->when($gradeLevel, function ($query, $gradeLevel) {
+                    $query->where('grade_level', $gradeLevel);
+                })
+
                 ->paginate(10)
         );
     }
