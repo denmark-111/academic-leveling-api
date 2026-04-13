@@ -19,12 +19,20 @@ class QuizController extends Controller
      */
     public function index(Request $request)
     {
+        $search = $request->query('search');
+
         return QuizResource::collection(
             Quiz::with('user')
                 ->withCount('questions')
                 ->where(function ($query) use ($request) {
                     $query->where('is_public', true)
                         ->orWhere('user_id', $request->user()->id);
+                })
+                ->when($search, function ($query, $search) {
+                    $query->where(function ($q) use ($search) {
+                        $q->where('quiz_code', $search) // exact match for quiz code
+                        ->orWhere('title', 'ILIKE', "%{$search}%");
+                    });
                 })
                 ->paginate(10)
         );
