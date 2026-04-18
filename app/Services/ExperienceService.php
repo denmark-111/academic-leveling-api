@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\LevelUp;
 use App\Models\User;
 
 class ExperienceService
@@ -16,6 +17,7 @@ class ExperienceService
         while ($user->exp >= $this->expToNextLevel($user->level)) {
             $user->exp -= $this->expToNextLevel($user->level);
             $user->level++;
+            event(new LevelUp($user->id, $user->level));
         }
 
         $user->save();

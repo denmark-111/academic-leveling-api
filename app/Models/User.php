@@ -65,4 +65,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Attempt::class);
     }
+
+    public function items()
+    {
+        return $this->hasMany(UserItem::class);
+    }
+
+    public function achievements()
+    {
+        return $this->hasMany(UserAchievement::class);
+    }
 }
