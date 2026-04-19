@@ -140,6 +140,8 @@ class AttemptController extends Controller
 
         // Calculate score
         $score = 0;
+        // Calculate total possible points
+        $totalPoints = $attempt->quiz->questions()->sum('points');
 
         foreach ($attempt->answers as $answer) {
             // Use the points from the question
@@ -155,10 +157,7 @@ class AttemptController extends Controller
         ]);
 
         // Fire quiz completed event
-        event(new QuizCompleted(
-            $attempt->user_id,
-            $score
-        ));
+        event(new QuizCompleted($attempt->user_id, $score, $totalPoints));
 
         return response()->json([
             'message' => 'Quiz submitted successfully',
@@ -196,6 +195,8 @@ class AttemptController extends Controller
 
         $score = 0;
         $correctCount = 0;
+        $totalPoints = $attempt->quiz->questions->sum('points');
+
 
         foreach ($validated['answers'] as $input) {
 
@@ -249,10 +250,7 @@ class AttemptController extends Controller
         ]);
 
         // fire quiz completed event
-        event(new QuizCompleted(
-            $attempt->user_id,
-            $score
-        ));
+        event(new QuizCompleted($attempt->user_id, $score, $totalPoints));
 
         return response()->json([
             'message' => 'Quiz submitted successfully',
