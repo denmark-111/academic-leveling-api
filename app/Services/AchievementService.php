@@ -48,4 +48,23 @@ class AchievementService
             $this->updateProgress($userId, 'perfect_score', 1);
         }
     }
+
+    public function setProgress($userId, $type, $value)
+    {
+        $achievements = Achievement::where('type', $type)->get();
+        foreach ($achievements as $achievement) {
+            $userAchievement = UserAchievement::firstOrCreate([
+                'user_id' => $userId,
+                'achievement_id' => $achievement->id,
+            ]);
+            if ($userAchievement->completed_at)
+                continue;
+
+            $userAchievement->progress = $value;
+            if ($userAchievement->progress >= $achievement->target_value) {
+                $userAchievement->completed_at = now();
+            }
+            $userAchievement->save();
+        }
+    }
 }
