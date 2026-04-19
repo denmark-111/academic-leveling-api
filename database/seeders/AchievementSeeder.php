@@ -58,10 +58,38 @@ class AchievementSeeder extends Seeder
                 'reward_exp' => 300,
                 'reward_coins' => 150,
             ],
+            [
+                'name' => 'Perfect Start',
+                'description' => 'Get a perfect score on any quiz',
+                'type' => 'perfect_score',
+                'target_value' => 1,
+                'reward_exp' => 200,
+                'reward_coins' => 100,
+            ],
+            [
+                'name' => 'EXP Accumulator',
+                'description' => 'Earn 5000 total EXP',
+                'type' => 'total_exp',
+                'target_value' => 5000,
+                'reward_exp' => 0,
+                'reward_coins' => 500,
+            ],
+            [
+                'name' => 'EXP Master',
+                'description' => 'Earn 20000 total EXP',
+                'type' => 'total_exp',
+                'target_value' => 20000,
+                'reward_exp' => 0,
+                'reward_coins' => 2000,
+            ],
         ];
 
         foreach ($achievements as $ach) {
-            Achievement::create($ach);
+            // Use firstOrCreate to avoid duplicates
+            Achievement::firstOrCreate(
+                ['name' => $ach['name']],  // check by name
+                $ach                       // data to create if not found
+            );
         }
     }
 }
