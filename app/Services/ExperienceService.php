@@ -4,12 +4,17 @@ namespace App\Services;
 
 use App\Events\LevelUp;
 use App\Models\User;
+use App\Events\TotalExpIncreased;
 
 class ExperienceService
 {
     public function gainExp($userId, $amount)
     {
         $user = User::findOrFail($userId);
+
+        $user->increment('total_exp', $amount);
+
+        event(new TotalExpIncreased($userId, $user->total_exp));
 
         $user->exp += $amount;
 
