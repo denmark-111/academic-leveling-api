@@ -5,18 +5,16 @@ namespace App\Events;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class QuizCompleted
+class LevelUp
 {
     use Dispatchable, SerializesModels;
 
     public $userId;
-    public $score;
-    public $totalPoints;
+    public $newLevel;
 
-    public function __construct($userId, $score, $totalPoints)
+    public function __construct($userId, $newLevel)
     {
         $this->userId = $userId;
-        $this->score = $score;
-        $this->totalPoints = $totalPoints;
+        $this->newLevel = $newLevel;
     }
 }

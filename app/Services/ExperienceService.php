@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Events\LevelUp;
 use App\Models\User;
+use App\Events\TotalExpIncreased;
 
 class ExperienceService
 {
@@ -10,12 +12,17 @@ class ExperienceService
     {
         $user = User::findOrFail($userId);
 
+        $user->increment('total_exp', $amount);
+
+        event(new TotalExpIncreased($userId, $user->total_exp));
+
         $user->exp += $amount;
 
         // Level up loop
         while ($user->exp >= $this->expToNextLevel($user->level)) {
             $user->exp -= $this->expToNextLevel($user->level);
             $user->level++;
+            event(new LevelUp($user->id, $user->level));
         }
 
         $user->save();
