@@ -13,6 +13,10 @@ Route::get('/user', function (Request $request) {
     return UserResource::make($request->user());
 })->middleware('auth:sanctum');
 
+Route::post('/test', function() {
+    return response()->json(['message' => 'POST works!']);
+});
+
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/register', [AuthController::class, 'register']);
