@@ -41,4 +41,11 @@ class AchievementService
             $userAchievement->save();
         }
     }
+
+    public function updatePerfectScore($userId, $score, $totalPoints)
+    {
+        if ($score == $totalPoints && $totalPoints > 0) {
+            $this->updateProgress($userId, 'perfect_score', 1);
+        }
+    }
 }
