@@ -19,5 +19,8 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\LevelUp::class => [
             \App\Listeners\UpdateAchievementsOnLevelUp::class,
         ],
+        \App\Events\TotalExpIncreased::class => [
+            \App\Listeners\UpdateAchievementsOnTotalExpIncreased::class,
+        ],
     ];
 }
