@@ -5,13 +5,8 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\QuestController;
 use App\Http\Controllers\Api\QuizController;
 use App\Http\Controllers\Api\StudySessionController;
-use App\Http\Resources\UserResource;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
-
-Route::get('/user', function (Request $request) {
-    return UserResource::make($request->user());
-})->middleware('auth:sanctum');
 
 Route::post('/test', function() {
     return response()->json(['message' => 'POST works!']);
@@ -26,6 +21,9 @@ Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('auth:sanctum');
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', [UserController::class, 'show']);
+    Route::put('/user', [UserController::class, 'update']);
+
     Route::get('/quizzes/mine', [QuizController::class, 'myQuizzes']);
     Route::apiResource('quizzes', QuizController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
 
