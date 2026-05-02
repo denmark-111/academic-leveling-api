@@ -99,7 +99,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->new_password)
         ]);
 
-        $user->notify(new PasswordChangedNotification());
+        // $user->notify(new PasswordChangedNotification());
 
         return response()->json([
             'message' => 'Password changed successfully'
