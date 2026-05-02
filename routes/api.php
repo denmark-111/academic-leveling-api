@@ -22,6 +22,7 @@ Route::post('/change-password', [AuthController::class, 'changePassword'])->midd
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [UserController::class, 'show']);
+    Route::get('/user/stats', [UserController::class, 'stats']);
     Route::put('/user', [UserController::class, 'update']);
 
     Route::get('/quizzes/mine', [QuizController::class, 'myQuizzes']);
