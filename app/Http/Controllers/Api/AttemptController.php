@@ -18,7 +18,7 @@ class AttemptController extends Controller
     public function index(Request $request)
     {
         $attempts = $request->user()->attempts()
-            ->with('quiz')
+            ->with(['quiz' => fn($q) => $q->withCount('questions')])
             ->whereNotNull('completed_at')
             ->paginate(10);
 
@@ -36,7 +36,10 @@ class AttemptController extends Controller
             return response()->json(['message' => 'Attempt not completed yet'], 404);
         }
 
-        return AttemptResource::make($attempt->load('quiz', 'answers.question'));
+        return AttemptResource::make($attempt->load([
+            'quiz' => fn($q) => $q->withCount('questions'),
+            'answers.question'
+        ]));
     }
 
     // Start the quiz
