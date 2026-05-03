@@ -16,7 +16,7 @@ class UpdateAchievementsOnLevelUp
 
     public function handle(LevelUp $event)
     {
-        // Update level_reached achievement to the new level
-        $this->achievementService->updateProgress($event->userId, 'level_reached', $event->newLevel);
+        // Set level_reached achievement to the new level (not cumulative)
+        $this->achievementService->setProgress($event->userId, 'level_reached', $event->newLevel);
     }
 }
