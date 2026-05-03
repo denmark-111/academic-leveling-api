@@ -24,7 +24,7 @@ class StudySessionController extends Controller
     {
         $validated = $request->validate([
             'session_at' => 'required|date',
-            'duration' => 'required|integer|min:300', // Minimum 5 minutes (300 seconds)
+            'duration' => 'required|integer|min:60', // Minimum 5 minutes (300 seconds)
         ]);
 
         $user = $request->user();
