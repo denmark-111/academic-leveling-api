@@ -41,4 +41,34 @@ class QuestService
             $userQuest->save();
         }
     }
+
+    /**
+     * Update progress for a specific quest by ID.
+     * Used for meta quest updates to avoid updating unrelated quests.
+     */
+    public function updateProgressForQuest($userId, $questId, $value)
+    {
+        $quest = Quest::findOrFail($questId);
+
+        $periodStart = $quest->period === 'daily'
+            ? now()->startOfDay()
+            : now()->startOfWeek();
+
+        $userQuest = UserQuest::firstOrCreate([
+            'user_id' => $userId,
+            'quest_id' => $quest->id,
+            'period_start' => $periodStart,
+        ]);
+
+        $userQuest->progress += $value;
+
+        if (!$userQuest->completed_at && $userQuest->progress >= $quest->target) {
+            $userQuest->completed_at = now();
+
+            // fire event for quest completion
+            event(new QuestCompleted($userId, $quest));
+        }
+
+        $userQuest->save();
+    }
 }

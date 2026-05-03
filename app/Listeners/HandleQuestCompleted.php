@@ -34,11 +34,10 @@ class HandleQuestCompleted
             ->get();
 
         foreach ($metaQuests as $metaQuest) {
-            app(QuestService::class)->updateProgress(
+            app(QuestService::class)->updateProgressForQuest(
                 $event->userId,
-                'quest_completion_count',
-                1,
-                $metaQuest->period // the meta quest's period
+                $metaQuest->id,
+                1
             );
         }
     }
