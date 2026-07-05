@@ -1,59 +1,99 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Academic Leveling API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+RESTful API backend powering the Academic Leveling mobile app — a gamified learning platform where students take quizzes, track study sessions, earn experience and coins, complete daily and weekly quests, unlock achievements, and purchase items from an in-app shop.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Quiz Management** — Create, edit, delete, and share quizzes (multiple choice, true/false, identification, mixed)
+- **Quiz Attempts** — Start, answer, and submit attempts with automated scoring and answer snapshots
+- **Study Sessions** — Log study time with auto-calculated rewards
+- **Gamification** — EXP, levels, coins, daily/weekly quests, achievements, and an item shop
+- **Public Sharing** — Share quizzes via unique 8-character codes
+- **API Auth** — Token-based authentication via Laravel Sanctum
+- **Event-Driven Rewards** — Experience, coins, quests, and achievements handled through events and listeners
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **PHP** 8.2+ / **Laravel** 12 / **Sanctum**
+- **Database** — PostgreSQL (hosted on Supabase)
+- **Deployment** — Render
 
-## Learning Laravel
+## API Endpoints
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Auth
+| Method | URI | Auth | Description |
+|--------|-----|------|-------------|
+| POST | `/api/register` | — | Register a new account |
+| POST | `/api/login` | — | Login with email/username |
+| POST | `/api/logout` | Yes | Revoke current token |
+| POST | `/api/change-password` | Yes | Change password |
+| POST | `/api/forgot-password` | — | Send password reset link |
+| POST | `/api/reset-password` | — | Reset password with token |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### User
+| Method | URI | Auth | Description |
+|--------|-----|------|-------------|
+| GET | `/api/user` | Yes | Get profile |
+| PUT | `/api/user` | Yes | Update username/email |
+| GET | `/api/user/stats` | Yes | Study statistics |
 
-## Laravel Sponsors
+### Quizzes
+| Method | URI | Auth | Description |
+|--------|-----|------|-------------|
+| GET | `/api/quizzes` | Yes | List quizzes (public + own) |
+| POST | `/api/quizzes` | Yes | Create quiz with questions |
+| GET | `/api/quizzes/{id}` | Yes | Get quiz details |
+| PUT | `/api/quizzes/{id}` | Yes | Update quiz |
+| DELETE | `/api/quizzes/{id}` | Yes | Soft-delete quiz |
+| GET | `/api/quizzes/mine` | Yes | List own quizzes |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Attempts
+| Method | URI | Auth | Description |
+|--------|-----|------|-------------|
+| POST | `/api/quizzes/{id}/attempts` | Yes | Start a quiz attempt |
+| POST | `/api/attempts/{id}/answers` | Yes | Save an answer |
+| POST | `/api/attempts/{id}/submit` | Yes | Submit attempt |
+| POST | `/api/attempts/{id}/submit-all` | Yes | Submit all answers at once |
+| GET | `/api/attempts` | Yes | Attempt history |
+| GET | `/api/attempts/{id}` | Yes | Attempt details |
 
-### Premium Partners
+### Study Sessions
+| Method | URI | Auth | Description |
+|--------|-----|------|-------------|
+| GET | `/api/study-sessions` | Yes | List study sessions |
+| POST | `/api/study-sessions` | Yes | Log a study session |
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Quests & Achievements
+| Method | URI | Auth | Description |
+|--------|-----|------|-------------|
+| GET | `/api/quests` | Yes | List quests with progress |
+| POST | `/api/quests/{id}/claim` | Yes | Claim quest reward |
+| GET | `/api/achievements` | Yes | List achievements with progress |
+| POST | `/api/achievements/{id}/claim` | Yes | Claim achievement reward |
 
-## Contributing
+### Shop
+| Method | URI | Auth | Description |
+|--------|-----|------|-------------|
+| GET | `/api/shop/items` | Yes | Browse shop items |
+| POST | `/api/shop/buy/{id}` | Yes | Purchase item with coins |
+| GET | `/api/user/inventory` | Yes | View purchased items |
+| POST | `/api/user/inventory/use/{id}` | Yes | Use/consume an item |
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Setup
 
-## Code of Conduct
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan serve
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Deployment
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- **Docker** — See `Dockerfile`
+- **Vercel** — See `vercel.json` and `api/lambda.php`
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+[MIT](LICENSE)
